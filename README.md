@@ -11,12 +11,36 @@ this is that `fr.opensagres.xdocreport:org.odftoolkit.odfdom.converter.pdf:1.0.6
 
 ## Usage
 
-### Library
+### Download from GitHub
+
+Add the following to your `build.gradle.kts` file:
+
+```kotlin   
+val odt2pdfVersion = "1.0"
+
+dependencies {
+    implementation(files(layout.buildDirectory.file("libs/odt2pdf-$odt2pdfVersion-all.jar")))
+}
+
+// Download library from GitHub
+tasks.register<de.undercouch.gradle.tasks.download.Download>("downloadOdt2pdf") {
+    src("https://github.com/tor-jorgen/odt2pdf/releases/download/v1.0.0/odt2pdf-$odt2pdfVersion-all.jar")
+    dest(layout.buildDirectory.file("libs/odt2pdf-$odt2pdfVersion-all.jar"))
+}
+
+tasks.named("compileKotlin") {
+    dependsOn("downloadOdt2pdf")
+}
+
+```
+
+### Download locally
+
 First you need to build and publish the library to your local Maven repository (Linux):
 
      ./gradlew clean build publishToMavenLocal
 
-Ensure that you have added your local Maven repository, and add a dependency to the library in the build file 
+Ensure that you have added your local Maven repository, and add a dependency to the library in the build file
 (in this example `build.gradle.kts`):
 
     repositories {
@@ -37,13 +61,13 @@ Add the following to your code (in this example Kotlin):
     converter.fromOdf(<arguments>)
 
 #### Logging
-`OdfXMLFactory` uses `java.util.logging`. You can add the following code to disable logging from `OdfXMLFactory` 
+
+`OdfXMLFactory` uses `java.util.logging`. You can add the following code to disable logging from `OdfXMLFactory`
 (Kotlin):
 
     import java.util.logging.LogManager
 
     LogManager.getLogManager().reset()
-
 
 ### Standalone
 
@@ -54,4 +78,5 @@ Run from the command line:
 Run without arguments, or with `-h` or `--help` to get help.
 
 ## License
+
 See [xdocreport](https://github.com/opensagres/xdocreport)
