@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test
 import org.odftoolkit.odfdom.doc.OdfTextDocument
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.FileOutputStream
 import java.nio.file.Files
 import java.nio.file.Path
 
 internal class PDFConverterTest {
-
     @Test
     fun `fromOdf converts file and replaces dot odt`() {
         val pdfConverter = PDFConverter()
@@ -36,7 +36,7 @@ internal class PDFConverterTest {
     }
 
     @Test
-    fun `fromOdf converts OdfTextDocument`() {
+    fun `fromOdf converts OdfTextDocument to PDF`() {
         val pdfConverter = PDFConverter()
         OdfTextDocument.loadDocument(File("src/test/resources/test.odt")).use { document ->
             pdfConverter.fromOdf(document, "src/test/resources/test.pdf")
@@ -46,12 +46,26 @@ internal class PDFConverterTest {
     }
 
     @Test
-    fun `fromOdf converts ByteArray`() {
+    fun `fromOdf converts ODT ByteArray to PDF`() {
         val pdfConverter = PDFConverter()
         OdfTextDocument.loadDocument(File("src/test/resources/test.odt")).use { document ->
             ByteArrayOutputStream().use { bytes ->
                 document.save(bytes)
                 pdfConverter.fromOdf(bytes.toByteArray(), "src/test/resources/test.pdf")
+            }
+        }
+
+        assertTrue(Files.exists(Path.of("src/test/resources/test.pdf")))
+    }
+
+    @Test
+    fun `fromOdf converts ODT ByteArray to PDF ByteArrayOutputStream`() {
+        val pdfConverter = PDFConverter()
+        OdfTextDocument.loadDocument(File("src/test/resources/test.odt")).use { document ->
+            ByteArrayOutputStream().use { bytes ->
+                document.save(bytes)
+                val pdf = pdfConverter.fromOdf(bytes.toByteArray())
+                FileOutputStream("src/test/resources/test.pdf").write(pdf.toByteArray())
             }
         }
 

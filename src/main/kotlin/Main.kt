@@ -10,7 +10,7 @@ fun main(args: Array<String>) {
             |Arguments:
             |  input file path:  Path to ODF file to be converted
             |  output file path: Path to converted PDF file. Optional. Default is input file path, replacing the extension with pdf, or adding .pdf if no extension exists 
-            """.trimMargin()
+            """.trimMargin(),
         )
         return
     }

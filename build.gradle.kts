@@ -1,15 +1,19 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+val kotlinVersion: String by project
+val javaLanguageVersion: String by project
 
 plugins {
-    kotlin("jvm") version "1.7.20"
+    kotlin("jvm")
     `maven-publish`
-    id("com.github.johnrengelman.shadow") version "7.1.2"
-    id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
+    id("com.gradleup.shadow") version "9.4.1"
+    id("org.jlleitschuh.gradle.ktlint") version "14.2.0"
+    id("dev.detekt") version ("2.0.0-alpha.3")
+    id("org.sonarqube") version "7.3.0.8198"
 }
 
 group = "org.odt2pdf"
-version = "1.0.0"
+version = "1.1.0"
 
 repositories {
     mavenCentral()
@@ -17,7 +21,8 @@ repositories {
 }
 
 dependencies {
-    implementation("fr.opensagres.xdocreport:org.odftoolkit.odfdom.converter.pdf:1.0.6")
+    val pdfConverterVersion = "1.0.6"
+    implementation("fr.opensagres.xdocreport:org.odftoolkit.odfdom.converter.pdf:$pdfConverterVersion")
 
     testImplementation(kotlin("test"))
 }
@@ -38,14 +43,29 @@ tasks.test {
     useJUnitPlatform()
 }
 
-tasks.withType<KotlinCompile> {
-    kotlinOptions.jvmTarget = "1.8"
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(javaLanguageVersion))
+    }
+}
+
+tasks.register("printVersion") {
+    group = "help"
+    description = "Prints the project version."
+
+    doLast {
+        println(project.version)
+    }
 }
 
 tasks {
     named<ShadowJar>("shadowJar") {
         archiveBaseName.set("odt2pdf")
         mergeServiceFiles()
+
+        // Only pull in runtime dependencies
+        configurations = listOf(project.configurations.runtimeClasspath.get())
+
         manifest {
             attributes(mapOf("Main-Class" to "MainKt"))
         }
@@ -58,5 +78,14 @@ tasks {
 tasks {
     build {
         dependsOn(shadowJar)
+    }
+}
+
+sonar {
+    properties {
+        property("sonar.organization", "tor-jorgen")
+        property("sonar.projectKey", "tor-jorgen_odt2pdf")
+        property("sonar.projectName", "ODT to PDF")
+        property("sonar.host.url", "https://sonarcloud.io")
     }
 }
