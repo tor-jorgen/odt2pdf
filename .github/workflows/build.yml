@@ -57,7 +57,7 @@ jobs:
           distribution: ${{ env.DISTRIBUTION }}
           java-version: ${{ env.JAVA_VERSION }}
       - name: Run Gradle check
-        run: ./gradlew check -x test
+        run: ./gradlew build -x test
       # Archive the build directory (reports, classes, etc.)
       - name: Upload Gradle build artifacts
         # actions/upload-artifact@v7.0.1
