@@ -18,6 +18,32 @@ You can either:
 
 ### Download from GitHub
 
+You can download from GitHub in two different ways:
+
+* Using GitHub Packages
+* Using GitHub Release
+
+#### Using GitHub Packages
+
+When using a GitHub package, you can download the package from the GitHub Packages registry (a Maven repository), but
+you will need to authenticate against the registry.
+
+Add the following to your `build.gradle.kts` file:
+
+```kotlin
+repositories {
+    maven { url = uri("https://maven.pkg.github.com/tor-jorgen/odt2pdf") }
+}
+
+val odt2pdfVersion = "1.1.0"
+implementation("org.odt2pdf:odt2pdf:$odt2pdfVersion")
+```
+
+#### Using GitHub Release
+
+When using a GitHub release, you can download the package without autenticating, but you have to use the
+`de.undercouch.gradle.tasks.download.Download` plugin. You will not benefit from caching, but that is not a big issue.
+
 Add the following to your `build.gradle.kts` file:
 
 ```kotlin   
@@ -41,7 +67,7 @@ tasks.named("compileKotlin") {
 
 ### Download and build locally
 
-Requires Java 25. 
+Requires Java 25.
 
 First you need to build and publish the library to your local Maven repository (Linux):
 
