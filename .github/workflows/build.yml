@@ -143,6 +143,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      packages: write
     steps:
       - name: Set Release Tag
         id: tag_variable
@@ -156,6 +157,10 @@ jobs:
         with:
           name: ${{ needs.gradle-build-and-test.outputs.build-artifact-name }}
           path: build/
+      - name: Publish to GitHub Packages
+        run: ./gradlew publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Create Release
         uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda
         env:
@@ -166,4 +171,4 @@ jobs:
           body: See [RELEASE-NOTES.md](RELEASE-NOTES.md)
           draft: false
           prerelease: false
-          files: build/libs/*.jar
+          files: build/libs/*-all.jar
