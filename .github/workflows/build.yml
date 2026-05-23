@@ -96,7 +96,7 @@ jobs:
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: ${{ needs.gradle-build-and-test.outputs.build-artifact-name }}
-          path: ./
+          path: build/
       # Run Sonar analysis, skipping the build step to reuse existing artifacts
       - name: Run SonarCloud analysis
         run: ./gradlew sonar -x compileJava -x test
@@ -155,7 +155,7 @@ jobs:
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c
         with:
           name: ${{ needs.gradle-build-and-test.outputs.build-artifact-name }}
-          path: ./
+          path: build/
       - name: Create Release
         uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda
         env:
