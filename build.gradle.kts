@@ -30,12 +30,21 @@ dependencies {
 publishing {
     publications {
         create<MavenPublication>("odt2pdf") {
-            from(components["java"])
+            artifact(tasks.named("shadowJar"))
         }
     }
 
     repositories {
         mavenLocal()
+
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/tor-jorgen/odt2pdf")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
     }
 }
 
